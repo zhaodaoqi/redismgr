@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dbredismgr.mapping.scoreMapper">
+   
+    <select id="selectScore" parameterType="int" resultType="com.iflyzunhong.vvm3.redismgrimpl.modal.Score">
+        SELECT * FROM the_score where id=#{id}
+    </select>
+    
+    <select id="selectAllScore" parameterType="int" resultType="map">
+        SELECT * FROM the_score where id >#{id}
+    </select>
+    
+    <insert id="addScore" parameterType="com.iflyzunhong.vvm3.redismgrimpl.modal.Score">
+        INSERT INTO the_score (user_id,yw,sx) VALUES (#{user_id},#{yw},#{sx})
+    </insert>  
+    
+    <delete id="deleteScore" parameterType="int">
+    	DELETE FROM the_score where id =#{id}
+    </delete>
+    
+	<delete id="updateScore" parameterType="com.iflyzunhong.vvm3.redismgrimpl.modal.Score">
+    	 UPDATE the_score set yw = #{yw},sx= #{sx} where id = #{id}
+    </delete>
+    
+</mapper>

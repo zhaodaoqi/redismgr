@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.iflyzunhong.vvm3</groupId>
+		<artifactId>redismgr</artifactId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>redismgrimpl</artifactId>
+	<version>1.0-SNAPSHOT</version>
+
+	<dependencies>
+
+		<!--依赖服务层接口定义包 -->
+		<dependency>
+			<groupId>com.iflyzunhong.vvm3</groupId>
+			<artifactId>redismgrapi</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+
+		<!--依赖通用工具包 -->
+		<dependency>
+			<groupId>com.iflyzunhong.vvmcommon</groupId>
+			<artifactId>vvmcommon</artifactId>
+			<version>2.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-resources-plugin</artifactId>
+			<version>2.6</version>
+		</dependency>
+
+	</dependencies>
+
+	<!--配置编译用到的插件 -->
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>**/*</include>
+				</includes>
+			</resource>
+		</resources>
+		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ssh</artifactId>
+				<version>2.8</version>
+			</extension>
+		</extensions>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>${java-version}</source>
+					<target>${java-version}</target>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>unpack</id>
+						<phase>package</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>com.alibaba</groupId>
+									<artifactId>dubbo</artifactId>
+									<version>2.5.3</version>
+									<outputDirectory>${project.build.directory}/dubbo</outputDirectory>
+									<includes>META-INF/assembly/**</includes>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<finalName>${project.parent.artifactId}</finalName>
+					<descriptor>src/main/assembly/assembly.xml</descriptor>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!--ssh远程上传插件，感兴趣的可以自行查阅资料-->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>wagon-maven-plugin</artifactId>
+				<version>1.0</version>
+				<configuration>
+					<fromFile>target/${project.parent.artifactId}-assembly.tar.gz</fromFile>
+					<url>scp://root:iflytek@172.16.88.159/usr/local/vvm</url>
+					<commands>
+						<command>cd /usr/local/vvm&amp;&amp;tar -xzvf
+							/usr/local/vvm/${project.parent.artifactId}-assembly.tar.gz</command>
+						<command>chmod +x
+							/usr/local/vvm/${project.parent.artifactId}/bin/start.sh</command>
+						<command>/usr/local/vvm/${project.parent.artifactId}/bin/restart.sh</command>
+					</commands>
+				</configuration>
+			</plugin>
+		</plugins>
+
+	</build>
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<conf.dir>${project.basedir}/src/main/config/dev</conf.dir>
+			</properties>
+		</profile>
+		<profile>
+			<id>test</id>
+			<properties>
+				<conf.dir>${project.basedir}/src/main/config/test</conf.dir>
+			</properties>
+		</profile>
+		<profile>
+			<id>product</id>
+			<properties>
+				<conf.dir>${project.basedir}/src/main/config/product</conf.dir>
+			</properties>
+		</profile>
+	</profiles>
+</project>

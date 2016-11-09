@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.iflyzunhong.vvm3</groupId>
+		<artifactId>redismgr</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+	
+	<artifactId>redismgrapi</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	
+	<dependencies>
+		<!--平台组件通用依赖包 -->
+		<dependency>
+			<groupId>com.iflyzunhong.vvmcommon</groupId>
+			<artifactId>vvmcommon</artifactId>
+			<version>2.2</version>
+		</dependency>
+	</dependencies>
+	
+	<!--上传到Nexus仓库配置 -->
+	<distributionManagement>
+		<repository>
+			<id>vvm-v3</id>
+			<url>http://120.236.141.162:8879/nexus/content/repositories/vvm-v3</url>
+		</repository>
+		<snapshotRepository>
+			<id>snapshot</id>
+			<url>http://120.236.141.162:8879/nexus/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+	
+	<!--上传source.jar 非必须 -->
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>${java-version}</source>
+					<target>${java-version}</target>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
